@@ -9,7 +9,7 @@ s.connect((host, port))
 while True:
     print "command:"
     command =  sys.stdin.readline()
-    print "input = ", command
+    #print "input = ", command
     if command == "exit\n":
         s.close
         break
