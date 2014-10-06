@@ -8,7 +8,7 @@ port = 10000
 s.connect((host, port))
 while True:
     print "command:"
-    command =  sys.stdin.readline()
+    command = sys.stdin.readline()
     command_list = command.split(' ')
     cmd = command_list[0]
     s.send(command)
@@ -16,6 +16,9 @@ while True:
         s.close
         break
     elif cmd == "get":
-        print "get files"
-    
-    print s.recv(1024)
+        f = open('server_sent-'+ (command_list[1])[:-1], 'wb')
+        l = s.recv(1024)
+        f.write(l)
+        f.close()
+    else:
+        print s.recv(1024)
