@@ -20,9 +20,19 @@ def getSize(fileName):
     st = os.stat(fileName)
     return st.st_size
 
+def encodeLength(l):
+    l = str(l)
+    while len(l) < 4096:
+        l = '0'+l
+    return l
 
-s = socket.socket()         
-IP = '192.168.0.106'
+def decodeLength(l):
+    l = str(l)
+    return int(l.lstrip('0'))
+
+s = socket.socket()
+print "input IP: "
+IP = sys.stdin.readline()[:-1] #'10.10.220.108'
 port = 10000
 s.bind((IP, port))       
 
@@ -51,25 +61,26 @@ while True:
                 fileName = com_list[1]
                 print fileName
                 try:
-                    sendFile = open(fileName)
-                    chunk = sendFile.read(1024)
-                    while (chunk):
-                        c.send(chunk)
-                        chunk = sendFile.read(1024)
+                    sendFile = open(fileName)   
+                    data = sendFile.read()
+                    c.sendall(encodeLength(len(data)))
+                    c.recv(1)
+                    c.sendall(data)
                     sendFile.close()
-                    c.send("@END OF FILE@")
+                    c.recv(1)
                     print 'completed transfer\n'
                 except Exception:
-                    c.send("Error: get failed")
+                    c.send("ERR: GET")
             else:
                 c.send("Invalid number of arguments for get.\n")
         elif com == 'add':
             f = open('client_sent-'+ (com_list[1]), 'wb')
-            l = c.recv(1024)
-            if "ERROR: add failed." not in l:
-                while (l and '@END OF FILE@' not in l):
-                    f.write(l)
-                    l = c.recv(1024)
+            l = c.recv(4096)
+            if "ERR: ADD" not in l:
+                datasize = decodeLength(l)
+                l = c.recv(datasize)
+                f.write(l)
+                c.send('0')
             f.close()
         elif com == 'exit':
             c.close()
