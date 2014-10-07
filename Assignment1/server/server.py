@@ -15,24 +15,9 @@ def signal_handler_receiving(signal, frame):
     s.close()
     sys.exit(0)
 
-#get size of file
-def getSize(fileName):
-    st = os.stat(fileName)
-    return st.st_size
-
-def encodeLength(l):
-    l = str(l)
-    while len(l) < 4096:
-        l = '0'+l
-    return l
-
-def decodeLength(l):
-    l = str(l)
-    return int(l.lstrip('0'))
-
 s = socket.socket()
 print "input IP: "
-IP = sys.stdin.readline()[:-1] #'10.10.220.108'
+IP = sys.stdin.readline()[:-1]
 port = 10000
 s.bind((IP, port))       
 
@@ -56,31 +41,25 @@ while True:
             contents = subprocess.Popen(["ls", "-l"], stdout=subprocess.PIPE)
             out, err = contents.communicate()
             c.send(out)
-        elif com == 'get': #Getting files from the server
-            if len(com_list) is 2:
-                fileName = com_list[1]
-                print fileName
-                try:
-                    sendFile = open(fileName)   
-                    data = sendFile.read()
-                    c.sendall(encodeLength(len(data)))
-                    c.recv(1)
-                    c.sendall(data)
-                    sendFile.close()
-                    c.recv(1)
-                    print 'completed transfer\n'
-                except Exception:
-                    c.send("ERR: GET")
-            else:
-                c.send("Invalid number of arguments for get.\n")
-        elif com == 'add':
-            f = open('client_sent-'+ (com_list[1]), 'wb')
-            l = c.recv(4096)
-            if "ERR: ADD" not in l:
-                datasize = decodeLength(l)
-                l = c.recv(datasize)
-                f.write(l)
-                c.send('0')
+        elif com == 'get': #Sending files to the client
+            fileName = com_list[1]
+            f = open(fileName, 'rb')
+            size = c.sendall(bytes(os.path.getsize(fileName)))
+            c.recv(32)
+            sending = 0
+            while os.path.getsize(fileName) > sending: 
+              sending += c.send(f.read(4013))
+            f.close()
+        elif com == 'add': #Receiving files from the client
+            f = open('client_sent-'+ com_list[1], 'wb')
+            size = int(c.recv(1024))
+            c.send(b'0')
+            recving = 0
+            while size > recving:
+              data = c.recv(4013)
+              recving += len(data)
+              f.write(data)
+            f.flush()
             f.close()
         elif com == 'exit':
             c.close()

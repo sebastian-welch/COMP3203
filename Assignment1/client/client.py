@@ -8,7 +8,7 @@ def getSize(fileName):
 
 def encodeLength(l):
     l = str(l)
-    while len(l) < 4096:
+    while len(l) < 1500:
         l = '0'+l
     return l
 
@@ -32,28 +32,26 @@ while True:
         s.close
         break
     elif cmd == "get" and len(command_list) is 2:
+        #Adding file to the client side
         f = open('server_sent-'+ (command_list[1])[:-1], 'wb')
-        l = s.recv(4096)
-        if "ERR: GET" not in l:
-            datasize = decodeLength(l)
-            s.send('y')
-            l = s.recv(datasize)
-            f.write(l)
-            s.send('y')
+        size = int(s.recv(1024))
+        s.send(b'0')
+        recving = 0
+        while size > recving:
+            data = s.recv(4013)
+            recving += len(data)
+            f.write(data)
+        f.flush()
         f.close()
     elif cmd == "add" and len(command_list) is 2:
-        filename = (command_list[1])[:-1]
-        print filename
-        try:
-            sendFile = open(filename)
-            data = sendFile.read()
-            s.sendall(encodeLength(len(data)))
-            s.sendall(data)
-            sendFile.close()
-            s.recv(1)
-            print 'completed transfer\n'
-        except Exception:
-            s.send("ERR: ADD")
-            print "Error detected. Add command failed."
+        #Adding files to the server
+        fileName = (command_list[1])[:-1]
+        f = open(fileName, 'rb')
+        size = s.sendall(bytes(os.path.getsize(fileName)))
+        s.recv(32)
+        sending = 0
+        while os.path.getsize(fileName) > sending:
+          sending += s.send(f.read(4013))
+        f.close()
     else:
         print s.recv(4096)
