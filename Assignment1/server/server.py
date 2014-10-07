@@ -42,25 +42,38 @@ while True:
             out, err = contents.communicate()
             c.send(out)
         elif com == 'get': #Sending files to the client
-            fileName = com_list[1]
-            f = open(fileName, 'rb')
-            size = c.sendall(bytes(os.path.getsize(fileName)))
-            c.recv(32)
-            sending = 0
-            while os.path.getsize(fileName) > sending: 
-              sending += c.send(f.read(4013))
-            f.close()
+            try:
+              fileName = com_list[1]
+              f = open(fileName, 'rb')
+              size = c.sendall(bytes(os.path.getsize(fileName)))
+              c.recv(32)
+              sending = 0
+              
+              while os.path.getsize(fileName) > sending: 
+                sending += c.send(f.read(4013))
+              f.close()
+            except Exception:
+              c.send("ERR: FILE UNREACHABLE, DISCONNECTING\n")
+              c.close()
+              break;
         elif com == 'add': #Receiving files from the client
-            f = open('client_sent-'+ com_list[1], 'wb')
-            size = int(c.recv(1024))
-            c.send(b'0')
-            recving = 0
-            while size > recving:
-              data = c.recv(4013)
-              recving += len(data)
-              f.write(data)
-            f.flush()
-            f.close()
+            try:
+              f = open('client_sent-'+ com_list[1], 'wb')
+              size = int(c.recv(1024))
+              c.send(b'0')
+              recving = 0
+              while size > recving:
+                data = c.recv(4013)
+                recving += len(data)
+                f.write(data)
+              f.flush()
+              f.close()
+            except Exception:
+                c.send("ERR: ADD FAILED, DISCONNECTION\n")
+                c.close()
+                break
         elif com == 'exit':
             c.close()
             break
+        else:
+            print "Command not recognized\n"
