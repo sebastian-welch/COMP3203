@@ -5,6 +5,7 @@
 import socket
 from struct import *
 
+#Print TCP packets
 def parseTCP(hLength, packet):
     packedTCPHeader = packet[hLength:hLength+20]
 
@@ -17,8 +18,8 @@ def parseTCP(hLength, packet):
     AKN = TCPHeader[3]      #Acknowledgement Number flag
     offset = TCPHeader[4]   #Data Offset
     hLength = offset >> 4   #Length of the TCP Header
-    #NS = TCPHeader[5] >> 8 & 10000000
-    #CWR = TCPHeader[5] >> 7 
+    window = TCPHeader[6]   #Size of the receive window
+    checksum = TCPHeader[7] #Error checksum
 
     print '-------TCP PACKET-------'
     print 'Source Port:   ' + str(srcPort)
@@ -27,8 +28,28 @@ def parseTCP(hLength, packet):
     print 'Ackn. #:       ' + str(AKN)
     print 'Data Offset:   ' + str(offset)
     print 'Header Length: ' + str(hLength)
-    #print 'NS:            ' + str(NS)
-    #print 'CWR:           ' + str(CWR)
+    print 'Window Size:   ' + str(window)
+    print 'Checksum:      ' + str(checksum)
+    print '------------------------'
+    print '\n'
+
+#Print UDP packets
+def parseUDP(hLength, packet):
+    packedUDPHeader = packet[hLength:hLength+8]
+
+    #Unpacking
+    UDPHeader = unpack('!HHHH', packedUDPHeader)
+    
+    srcPort = UDPHeader[0]  #Source port
+    destPort = UDPHeader[1] #Destination port
+    hLength = UDPHeader[2]  #UDP Header length
+    checksum = UDPHeader[3] #Error checksum
+
+    print '-------UDP PACKET-------'
+    print 'Source Port:   ' + str(srcPort)
+    print 'Dest. Port:    ' + str(destPort)
+    print 'Header Length: ' + str(hLength)
+    print 'Checksum:      ' + str(checksum)
     print '------------------------'
     print '\n'
 
@@ -80,6 +101,11 @@ while True:
     print '-----------------------'
     print '\n'
 
-    #TCP Packets
-    if protocol == 6:
-       parseTCP(headerLength, packet)
+    
+    if protocol == 6:       #TCP Packets
+        parseTCP(headerLength, packet) 
+    else if protocol == 17: #UDP Packets
+        parseUDP(headerLength, packet)
+    else:                   #Other
+        print 'Non TCP or UDP header.'
+        print '\n'
