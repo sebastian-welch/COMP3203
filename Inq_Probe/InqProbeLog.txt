@@ -1,0 +1,90 @@
+------PACKET RECEIVED------
+-------ETH HEADER------
+Destination MAC: 45:00:00:34:78:92
+Source MAC:      40:00:80:06:ff:df
+Protocol:        43200-----------------------
+-------IP HEADER-------
+Version:       4
+Header Length: 16
+ToS:           0
+Packet Length: 52
+ID Tag:        30866
+Flags:         2
+TTL:           128
+Protocol:      6
+Checksum:      65503
+Source IP:     192.168.0.128
+Dest. IP:      192.168.0.129
+-----------------------
+-------TCP HEADER-------
+Source Port:   49320
+Dest. Port:    129
+Sequence #:    3471770045
+Ackn. #:       489301039
+Data Offset:   0
+Header Length: 0
+Window Size:   0
+Checksum:      32770
+------------------------
+---------------------------
+
+------PACKET RECEIVED------
+-------ETH HEADER------
+Destination MAC: 45:00:00:34:78:93
+Source MAC:      40:00:80:06:ff:de
+Protocol:        43200-----------------------
+-------IP HEADER-------
+Version:       4
+Header Length: 16
+ToS:           0
+Packet Length: 52
+ID Tag:        30867
+Flags:         2
+TTL:           128
+Protocol:      6
+Checksum:      65502
+Source IP:     192.168.0.128
+Dest. IP:      192.168.0.129
+-----------------------
+-------TCP HEADER-------
+Source Port:   49320
+Dest. Port:    129
+Sequence #:    3471770045
+Ackn. #:       489301039
+Data Offset:   0
+Header Length: 0
+Window Size:   0
+Checksum:      32770
+------------------------
+---------------------------
+
+------PACKET RECEIVED------
+-------ETH HEADER------
+Destination MAC: 45:00:00:30:78:95
+Source MAC:      40:00:80:06:ff:e0
+Protocol:        43200-----------------------
+-------IP HEADER-------
+Version:       4
+Header Length: 16
+ToS:           0
+Packet Length: 48
+ID Tag:        30869
+Flags:         2
+TTL:           128
+Protocol:      6
+Checksum:      65504
+Source IP:     192.168.0.128
+Dest. IP:      192.168.0.129
+-----------------------
+-------TCP HEADER-------
+Source Port:   49320
+Dest. Port:    129
+Sequence #:    3471770045
+Ackn. #:       489301039
+Data Offset:   0
+Header Length: 0
+Window Size:   0
+Checksum:      28674
+------------------------
+---------------------------
+
