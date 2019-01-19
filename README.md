@@ -1,7 +1,6 @@
-COMP3203
+COMP3203 Python Packet Sniffer
 ========
-##Contributors
+Contributors
+------------
 Sebastian Welch  
 Shawn Ellis  
-
-Projects! Python! /FUN!/
